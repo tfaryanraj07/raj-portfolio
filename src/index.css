@@ -1,0 +1,39 @@
+/*
+ * 1. FONT IMPORTS MUST GO FIRST!
+ * This is the Inter font import.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* * 2. TAILWIND DIRECTIVES
+ * These must come after @import, but before any custom CSS.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * 3. CUSTOM CSS RULES
+ * These must come last.
+ */
+
+/* Global styles */
+html {
+    scroll-behavior: smooth;
+    /* Set the default font */
+    font-family: 'Inter', sans-serif;
+}
+
+/* Delay modifiers for the blob animation defined in tailwind.config.js */
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+/* Ensure the root element spans the height of the screen */
+#root {
+    min-height: 100vh;
+}
+    /* ... */
+
+/* ... */
