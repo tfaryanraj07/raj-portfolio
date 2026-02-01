@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import emailjs from "@emailjs/browser";
+
 
 // --- DATA DEFINITIONS ---
 
@@ -30,7 +32,7 @@ const projects = [
     description: "The very site you are viewing, built from the ground up to showcase my skills in UI/UX and React development.",
     image: "https://placehold.co/600x400/1E3A8A/ffffff?text=Portfolio+Website",
     techStack: ["React", "Tailwind CSS", "Framer Motion", "UX Design"],
-    externalLink: "https://raj-solanki-portfolio.netlify.app", 
+    externalLink: "https://raj-portfolo.netlify.app/",
     longDescription: "This project served as my personal sandbox to experiment with modern web design principles and animations. I focused on creating a visually appealing, responsive layout that prioritizes a seamless user journey. The subtle animations and use of whitespace are key components of the design."
   },
   // {
@@ -72,10 +74,10 @@ const skillsData = [
 const certificatesData = [
   {
     id: 1,
-    title: "AWS Certified Developer – Associate",
-    issuer: "Amazon Web Services",
-    date: "July 2023",
-    image: "https://placehold.co/400x300/F97316/ffffff?text=AWS+Certificate",
+    title: "IBM SKILL BUILD",
+    issuer: "IBM",
+    date: "Dec 2023",
+    image: "/images/IBM.jpg",
   },
   {
     id: 2,
@@ -103,10 +105,10 @@ const certificatesData = [
     title: "Internal SIH participation",
     issuer: "Haridwar University",
     date: "September 2025",
-    image: "/images/WhatsAppImage_IITBombay.jpeg",
+    image: "/images/SIH certificate.jpg",
   },
   {
-    id: 5,
+    id: 6,
     title: "Advanced Relational Database and SQL",
     issuer: "Coursera",
     date: "july 2025",
@@ -306,7 +308,34 @@ const HeroSection = () => {
             <p className="mt-6 text-lg text-gray-200 max-w-xl mx-auto md:mx-0 font-inter">
               I craft modern, high-performance web applications with a focus on user-centric design and clean, scalable code.
             </p>
-            <motion.a
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+  
+  {/* View Resume */}
+  <motion.a
+    href="/resume/RajSolanki_Resume (1) (1) (1).pdf"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="px-8 py-3 text-lg font-semibold text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition duration-300 shadow-xl"
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+  >
+    View Resume
+  </motion.a>
+
+  {/* Download Resume */}
+  <motion.a
+    href="/resume/Raj_Solanki_Resume.pdf"
+    download
+    className="px-8 py-3 text-lg font-semibold text-indigo-400 border-2 border-indigo-400 rounded-full hover:bg-indigo-400 hover:text-white transition duration-300 shadow-xl"
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+  >
+    Download Resume
+  </motion.a>
+
+</div>
+
+             {/* <motion.a
               href="#projects"
               className="mt-10 inline-block px-8 py-3 text-lg font-semibold text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition duration-300 shadow-xl transform hover:scale-[1.02] font-inter"
               initial={{ y: 20, opacity: 0 }}
@@ -314,7 +343,7 @@ const HeroSection = () => {
               transition={{ delay: 0.5, duration: 0.5 }}
             >
               View My Work
-            </motion.a>
+            </motion.a>  */}
           </div>
           <div className="md:w-2/5 mt-10 md:mt-0 flex justify-center">
           <motion.div
@@ -552,8 +581,14 @@ const CertificatesSection = () => {
 };
 
 const ContactSection = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
   const [submissionMessage, setSubmissionMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -561,94 +596,106 @@ const ContactSection = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real application, you would handle form submission here
-    console.log('Form Submitted:', formData);
-    setSubmissionMessage("Thank you! Your message has been sent. I will get back to you shortly.");
-    setFormData({ name: '', email: '', message: '' });
-    setTimeout(() => setSubmissionMessage(null), 5000);
+    setLoading(true);
+
+    emailjs
+      .send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
+      .then(
+        () => {
+          setSubmissionMessage(
+            "Thank you! Your message has been sent. I will get back to you shortly."
+          );
+          setFormData({ name: "", email: "", message: "" });
+          setLoading(false);
+
+          setTimeout(() => setSubmissionMessage(null), 5000);
+        },
+        (error) => {
+          console.error("EmailJS Error:", error);
+          setSubmissionMessage("❌ Failed to send message. Please try again.");
+          setLoading(false);
+        }
+      );
   };
 
   return (
     <section id="contact" className="py-20 bg-slate-900 text-white">
       <div className="max-w-xl mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center mb-8 font-inter text-indigo-400">Get In Touch</h2>
-        <p className="text-center text-gray-400 mb-8 font-inter">
-          I'm currently open to new opportunities. Feel free to reach out to me via the form below or connect on social media!
-        </p>
-        
-        {/* --- Social Media Icons --- */}
-        <div className="flex justify-center space-x-6 mb-12">
-          {socialLinks.map((link) => (
-            <motion.a
-              key={link.name}
-              href={link.url}
-              target={link.name !== 'Email' ? '_blank' : '_self'}
-              rel="noopener noreferrer"
-              className={`p-4 rounded-full bg-slate-700/70 transition-all duration-300 transform hover:scale-110 shadow-lg ${link.color}`}
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label={link.name}
-            >
-              {link.icon}
-            </motion.a>
-          ))}
-        </div>
-        {/* --- End Social Media Icons --- */}
+        <h2 className="text-4xl font-bold text-center mb-8 font-inter text-indigo-400">
+          Get In Touch
+        </h2>
 
         <GlassPanel className="p-8">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-gray-300 font-semibold mb-2 font-inter" htmlFor="name">Name</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                value={formData.name} 
+              <label className="block text-gray-300 font-semibold mb-2">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-inter"
-                required 
+                required
+                className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 focus:ring-2 focus:ring-indigo-400"
               />
             </div>
+
             <div className="mb-4">
-              <label className="block text-gray-300 font-semibold mb-2 font-inter" htmlFor="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                value={formData.email} 
+              <label className="block text-gray-300 font-semibold mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-inter"
-                required 
+                required
+                className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 focus:ring-2 focus:ring-indigo-400"
               />
             </div>
+
             <div className="mb-6">
-              <label className="block text-gray-300 font-semibold mb-2 font-inter" htmlFor="message">Message</label>
-              <textarea 
-                id="message" 
-                name="message" 
-                value={formData.message} 
-                onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-inter"
+              <label className="block text-gray-300 font-semibold mb-2">
+                Message
+              </label>
+              <textarea
+                name="message"
                 rows="5"
-                required 
+                value={formData.message}
+                onChange={handleChange}
+                required
+                className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 focus:ring-2 focus:ring-indigo-400"
               />
             </div>
+
             <motion.button
               type="submit"
-              className="w-full p-3 text-lg font-bold text-white bg-emerald-600 rounded-full hover:bg-emerald-700 transition duration-300 shadow-xl"
+              disabled={loading}
+              className="w-full p-3 text-lg font-bold bg-emerald-600 rounded-full hover:bg-emerald-700 disabled:opacity-50"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.95 }}
             >
-              Send Message
+              {loading ? "Sending..." : "Send Message"}
             </motion.button>
           </form>
+
           <AnimatePresence>
             {submissionMessage && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="mt-6 text-center p-4 rounded-lg bg-emerald-500/20 text-emerald-400 font-inter"
+                exit={{ opacity: 0 }}
+                className="mt-6 text-center p-4 rounded-lg bg-emerald-500/20 text-emerald-400"
               >
                 {submissionMessage}
               </motion.div>
@@ -659,6 +706,7 @@ const ContactSection = () => {
     </section>
   );
 };
+
 
 const Footer = () => (
   <footer className="py-6 bg-slate-900 text-gray-500 text-center font-inter border-t border-slate-700/50">
