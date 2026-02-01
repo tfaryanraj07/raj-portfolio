@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './app.jsx';
+import App from './App.jsx';
 import './index.css'; // Import the new global CSS file
 
 // Find the root element and create the React application
